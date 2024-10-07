@@ -1,8 +1,13 @@
 "------------------- Vim settings -----------------------
+" TODO list:
+" copilot
+" fix icons
+" remap Ctr + j
+" fix a new line indentation
+" ------------------
 " autosave view
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-  au BufRead,BufNewFile *.erb set filetype=eruby.html
 endif
 
 set t_ut=                " fix 256 colors in tmux http://sunaku.github.io/vim-256color-bce.html
@@ -36,9 +41,9 @@ let &undodir = target_path
 set undofile
 
 " Auto indentation
-" set expandtab
-" set shiftwidth=2
-" set softtabstop=2
+set expandtab
+set shiftwidth=2
+set softtabstop=2
 
 let g:ruby_indent_access_modifier_style="indent"
 let g:ruby_indent_assignment_style="variable"
@@ -82,6 +87,10 @@ call plug#begin('~/.vim/plugged')
   Plug 'burntsushi/ripgrep'
   Plug 'jphustman/sqlutilities'
 
+  " Autocomplete
+  " possible issue and fix for it https://github.com/ycm-core/YouCompleteMe/issues/4243
+  Plug 'ycm-core/YouCompleteMe'
+
   " Appearance
   Plug 'ryanoasis/vim-devicons'
   Plug 'tomasr/molokai'
@@ -108,6 +117,8 @@ call plug#begin('~/.vim/plugged')
   Plug 'preservim/vimux'
   Plug 'victorfeijo/binding-pry-vim'
 
+  " Plug 'pangloss/vim-javascript'
+
   " Languages
   Plug 'vim-ruby/vim-ruby'
   Plug 'noprompt/vim-yardoc'
@@ -126,9 +137,12 @@ call plug#end()
 set hidden
 
 " copilot
-imap <silent><script><expr> <C-T> copilot#Accept("\<CR>")
-imap jj <Esc>
+imap <silent><script><expr> <C-Space> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
+" imap <C-L> <Plug>(copilot-accept-word)
+"
+
+imap jj <Esc>
 
 " easymotion
 let g:EasyMotion_smartcase = 1
@@ -172,7 +186,7 @@ map <Leader>.h :AV<CR>
 map <Leader>ra :A<CR>
 
 " fzf
-" ????
+" ???? to fix
 map <Leader>g :Rg<Cr>
 " search by files
 map <Leader>c :Files<Cr>
