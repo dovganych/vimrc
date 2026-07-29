@@ -1,27 +1,19 @@
 "------------------- Vim settings -----------------------
 " TODO list:
-" copilot
-" fix icons
 " remap Ctr + j
-" fix a new line indentation
 " ------------------
 " autosave view
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
-set t_ut=                " fix 256 colors in tmux http://sunaku.github.io/vim-256color-bce.html
-
-au BufWritePre * :%s/\s\+$//e       " trailing whitespaces
-
 set encoding=UTF-8
 set shell=/usr/bin/zsh
-set clipboard=unnamed               " use system clipboard
+set clipboard=unnamedplus           " use system clipboard
 set tags+=gems.tags                 " ctags
 set nu                              " enable left numbers
 set rnu
 set fillchars=vert:\                " disable vert div chars
-set nocompatible                    " be iMproved, required
 set cursorline                      " highlight the cursor screen line "
 set cursorcolumn                    " highlight the cursor screen line "
 set scrolloff=10                    " minimal number of screen lines to keep above and below the cursor "
@@ -41,6 +33,7 @@ let &undodir = target_path
 set undofile
 
 " Auto indentation
+set autoindent
 set expandtab
 set shiftwidth=2
 set softtabstop=2
@@ -65,11 +58,9 @@ let mapleader=","
 
 "---------------- Plugins -------------------
 call plug#begin('~/.vim/plugged')
-  Plug 'vim-scripts/L9'
-
   " Navigation
   Plug 'chaoren/vim-wordmotion'
-  Plug 'Lokaltog/vim-easymotion'
+  Plug 'easymotion/vim-easymotion'
   Plug 'scrooloose/nerdtree'
   Plug 'majutsushi/tagbar'
   Plug 'matze/vim-move'
@@ -78,27 +69,23 @@ call plug#begin('~/.vim/plugged')
   Plug 'editorconfig/editorconfig-vim'
 
   " Correction
-  Plug 'w0rp/ale'
+  Plug 'dense-analysis/ale'
   Plug 'ntpeters/vim-better-whitespace'
   Plug 'reedes/vim-wordy'
   Plug 'github/copilot.vim', { 'branch': 'release' }
   Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
   Plug 'junegunn/fzf.vim'
-  Plug 'burntsushi/ripgrep'
   Plug 'jphustman/sqlutilities'
-
-  " Autocomplete
-  " possible issue and fix for it https://github.com/ycm-core/YouCompleteMe/issues/4243
-  Plug 'ycm-core/YouCompleteMe'
 
   " Appearance
   Plug 'ryanoasis/vim-devicons'
   Plug 'tomasr/molokai'
+  Plug 'fmoralesc/molokayo'
   Plug 'airblade/vim-gitgutter'
   Plug 'kshenoy/vim-signature'
   Plug 'Bling/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  Plug 'gorodinskiy/vim-coloresque'
+  Plug 'ap/vim-css-color'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-rhubarb'
   Plug 'skywind3000/asyncrun.vim'
@@ -113,11 +100,9 @@ call plug#begin('~/.vim/plugged')
   Plug 'tpope/vim-endwise'
   Plug 'tpope/vim-rails'
   Plug 'AndrewRadev/switch.vim'
-  Plug 'janko-m/vim-test'
+  Plug 'vim-test/vim-test'
   Plug 'preservim/vimux'
   Plug 'victorfeijo/binding-pry-vim'
-
-  " Plug 'pangloss/vim-javascript'
 
   " Languages
   Plug 'vim-ruby/vim-ruby'
@@ -137,10 +122,7 @@ call plug#end()
 set hidden
 
 " copilot
-imap <silent><script><expr> <C-Space> copilot#Accept("\<CR>")
-let g:copilot_no_tab_map = v:true
-" imap <C-L> <Plug>(copilot-accept-word)
-"
+imap <C-L> <Plug>(copilot-accept-word)
 
 imap jj <Esc>
 
@@ -161,9 +143,6 @@ set laststatus=2
 map <C-n> :NERDTreeToggle<CR>
 
 " molokai & colors/italic/background
-set t_Co=256
-let g:molokai_original = 1
-let g:rehash256 = 1
 colo molokai
 hi Normal ctermfg=252 ctermbg=none
 hi Comment cterm=italic
@@ -186,30 +165,32 @@ map <Leader>.h :AV<CR>
 map <Leader>ra :A<CR>
 
 " fzf
-" ???? to fix
 map <Leader>g :Rg<Cr>
 " search by files
 map <Leader>c :Files<Cr>
 
 " ctags
 nmap <C-t> :TagbarToggle<CR>
-" map <Leader>.t :ta /^
 
 " move
 let g:move_key_modifier = 'C'
 
+" copy file path to system clipboard
+nnoremap <Leader>fp :let @+ = expand('%')<CR>     " relative path
+nnoremap <Leader>fP :let @+ = expand('%:p')<CR>   " absolute path
+
 " fugitive
-map <Leader>.s :GStatus<CR>
+map <Leader>.s :Git<CR>
 map <Leader>.b :Git blame<CR>
 map <Leader>.w :GBrowse<CR>
-map <Leader>.d :Gdiff<CR>
+map <Leader>.d :Gdiffsplit<CR>
 set diffopt+=vertical
 
 " ale
 " Only run linters named in ale_linters settings.
 let g:ale_linters_explicit = 1
-let b:ale_linters = {
-\   'ruby': ['ruby', 'rubycop', 'reek']
+let g:ale_linters = {
+\   'ruby': ['ruby', 'rubocop', 'reek']
 \}
 
 let g:airline#extensions#ale#enabled = 1
@@ -227,7 +208,6 @@ let g:ale_echo_msg_format = '[%linter%] %s'
 highlight clear SpellBad
 highlight SpellBad cterm=bold,italic ctermfg=014 ctermbg=000
 
-" I got up at 8 AM
 " wordy
 let g:wordy#ring = [
   \ 'weak',
@@ -248,11 +228,4 @@ inoremap _ <C-]>_
 inoremap . <C-]>.
 inoremap - <C-]>-
 
-" jsx
-let g:jsx_pragma_required = 1
-
-
-set diffopt+=vertical
-
-" motion
-nnoremap <C-d> db
+filetype plugin indent on
